@@ -73,7 +73,7 @@ For more details on parameters, check class varnish.
 
    Definition `varnish::acl` allows to configure Varnish acl.
 
-    varnish::acl { 'acl1': hosts => [ "localhost", "172.16.0.1" ] }
+    varnish::acl { 'acl1': hosts => [ "localhost", '"172.16.0.1"/24' ] }
 
 ### varnish probe
 
