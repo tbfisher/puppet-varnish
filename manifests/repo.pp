@@ -7,7 +7,7 @@ class varnish::repo (
   $enable = true,
   ) {
 
-  $repo_base_url = 'http://repo.varnish-cache.org'
+  $repo_base_url = 'https://repo.varnish-cache.org'
 
   $repo_distro = $::operatingsystem ? {
     'RedHat'    => 'redhat',
@@ -48,11 +48,13 @@ class varnish::repo (
         }
       }
       debian: {
+        apt::key { 'E98C6BBBA1CBC5C3EB2DF21C60E7C096C4DEFFEB':
+          source     => "${repo_base_url}/GPG-key.txt",
+        }
         apt::source { 'varnish':
           location   => "${repo_base_url}/${repo_distro}",
           repos      => "varnish-${repo_version}",
           key        => 'E98C6BBBA1CBC5C3EB2DF21C60E7C096C4DEFFEB',
-          key_source => 'http://repo.varnish-cache.org/debian/GPG-key.txt',
         }
       }
       default: {
