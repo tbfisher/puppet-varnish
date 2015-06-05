@@ -53,23 +53,23 @@ class varnish::vcl (
 
   include varnish
 
-  # define include file type
-  define includefile {
-    $selectors = $varnish::vcl::selectors
-    concat { "${varnish::vcl::includedir}/${title}.vcl":
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0444',
-      notify  => Service['varnish'],
-      require => File[$varnish::vcl::includedir],
-    }
+  # # define include file type
+  # define includefile {
+  #   $selectors = $varnish::vcl::selectors
+  #   concat { "${varnish::vcl::includedir}/${title}.vcl":
+  #     owner   => 'root',
+  #     group   => 'root',
+  #     mode    => '0444',
+  #     notify  => Service['varnish'],
+  #     require => File[$varnish::vcl::includedir],
+  #   }
 
-    concat::fragment { "${title}-header":
-      target  => "${varnish::vcl::includedir}/${title}.vcl",
-      content => "# File managed by Puppet\n",
-      order   => '01',
-    }
-  }
+  #   concat::fragment { "${title}-header":
+  #     target  => "${varnish::vcl::includedir}/${title}.vcl",
+  #     content => "# File managed by Puppet\n",
+  #     order   => '01',
+  #   }
+  # }
 
 
   # select template to use
@@ -98,7 +98,7 @@ class varnish::vcl (
       require => Package['varnish'],
     }
     $includefiles = ['probes', 'backends', 'directors', 'acls', 'backendselection', 'waf']
-    includefile { $includefiles: }
+    varnish::vcl::includefile { $includefiles: }
 
     # web application firewall
     concat::fragment { 'waf':
@@ -133,5 +133,23 @@ class varnish::vcl (
     }
     $all_acls = merge($default_acls, $acls)
     create_resources(varnish::acl,$all_acls)
+  }
+}
+
+# define include file type
+define varnish::vcl::includefile {
+  $selectors = $varnish::vcl::selectors
+  concat { "${varnish::vcl::includedir}/${title}.vcl":
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0444',
+    notify  => Service['varnish'],
+    require => File[$varnish::vcl::includedir],
+  }
+
+  concat::fragment { "${title}-header":
+    target  => "${varnish::vcl::includedir}/${title}.vcl",
+    content => "# File managed by Puppet\n",
+    order   => '01',
   }
 }
